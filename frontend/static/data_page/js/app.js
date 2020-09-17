@@ -1,108 +1,114 @@
-// from data.js
-var tableData = data;
+// Grab the data with d3
+d3.json("/api/v1.0/vbafauna").then((importedData) => {
+	console.log(importedData);
 
-// LEVEL 2: MULTIPLE SEARCH CATEGORIES
+	//**** BELOW ARE TRACEY'S REFERENCES CODE. PLEASE REFER TO /IGNORE/ DELETE AS YOU LIKE
 
-// Get a reference to the table body
-var tbody = d3.select("tbody");
+	// var tableData = importedData;
 
-// Add the whole table of ufo sightings data when loading the page
-tableData.forEach((ufo) => {
-	var row = tbody.append("tr");
-	Object.entries(ufo).forEach(([key, value]) => {
-		var cell = row.append("td");
-		cell.text(value);
-	})
-})
+	// // LEVEL 2: MULTIPLE SEARCH CATEGORIES
 
-// Create arrays to store distinct countries, states, and shapes in abc order
-var uniqueCountry = [... new Set(tableData.map(ufo => ufo.country))].sort();
-console.log(uniqueCountry);
+	// // Get a reference to the table body
+	// var tbody = d3.select("tbody");
 
-var uniqueState = [... new Set(tableData.map(ufo => ufo.state))].sort();
-console.log(uniqueState);
+	// // Add the whole table of ufo sightings data when loading the page
+	// tableData.forEach((ufo) => {
+	// 	var row = tbody.append("tr");
+	// 	Object.entries(ufo).forEach(([key, value]) => {
+	// 		var cell = row.append("td");
+	// 		cell.text(value);
+	// 	})
+	// })
 
-var uniqueShape = [... new Set(tableData.map(ufo => ufo.shape))].sort();
-console.log(uniqueShape);
+	// // Create arrays to store distinct countries, states, and shapes in abc order
+	// var uniqueCountry = [... new Set(tableData.map(ufo => ufo.country))].sort();
+	// console.log(uniqueCountry);
 
-// Dynamically add unique countries, states and shapes to corresponding dropdown menus
-uniqueCountry.forEach((country) => {
-	d3.select("#country").append("option").text(country);
-})
+	// var uniqueState = [... new Set(tableData.map(ufo => ufo.state))].sort();
+	// console.log(uniqueState);
 
-uniqueState.forEach((state) => {
-	d3.select("#state").append("option").text(state);
-})
+	// var uniqueShape = [... new Set(tableData.map(ufo => ufo.shape))].sort();
+	// console.log(uniqueShape);
 
-uniqueShape.forEach((shape) => {
-	d3.select("#shape").append("option").text(shape);
-})
+	// // Dynamically add unique countries, states and shapes to corresponding dropdown menus
+	// uniqueCountry.forEach((country) => {
+	// 	d3.select("#country").append("option").text(country);
+	// })
 
-// Select and Create event handlers for the form's inputs and dropdown selections
-d3.selectAll(".form-control").on("change", updateFilters);
+	// uniqueState.forEach((state) => {
+	// 	d3.select("#state").append("option").text(state);
+	// })
 
-// Select and Create event handlers for the button Clear Filter
-d3.select("#filter-btn").on("click", clear);
+	// uniqueShape.forEach((shape) => {
+	// 	d3.select("#shape").append("option").text(shape);
+	// })
 
-// Create filter object to keep track of all filters
-var multifilters = {};
+	// // Select and Create event handlers for the form's inputs and dropdown selections
+	// d3.selectAll(".form-control").on("change", updateFilters);
 
-// Create a function to dynamically add a filter value each time user add any filter
-function updateFilters() {
+	// // Select and Create event handlers for the button Clear Filter
+	// d3.select("#filter-btn").on("click", clear);
 
-  // Save the element, value, and id of the filter that was changed
-	// In an event, "this" refers to the html element that received the event.
-  var inputElement = d3.select(this);
-  var filterId = inputElement.attr("id");
-  var inputValue = inputElement.property("value").toLowerCase();
+	// // Create filter object to keep track of all filters
+	// var multifilters = {};
 
-  // If a filter value was entered then add that filterId and value
-  // to the filters array. Otherwise, clear that filter from the filters object.
-  if (inputValue) {
-	  multifilters[filterId] = inputValue;
-  }
-  else {
-    delete multifilters[filterId];
-  }
+	// // Create a function to dynamically add a filter value each time user add any filter
+	// function updateFilters() {
 
-  // Call function to apply all filters and rebuild the table
-  filterTable();
-}
+	//  // Save the element, value, and id of the filter that was changed
+	// 	// In an event, "this" refers to the html element that received the event.
+	//  var inputElement = d3.select(this);
+	//  var filterId = inputElement.attr("id");
+	//  var inputValue = inputElement.property("value").toLowerCase();
 
-function filterTable() {
+	//  // If a filter value was entered then add that filterId and value
+	//  // to the filters array. Otherwise, clear that filter from the filters object.
+	//  if (inputValue) {
+	// 	  multifilters[filterId] = inputValue;
+	//  }
+	//  else {
+	//    delete multifilters[filterId];
+	//  }
 
-  // Prevent the page from refreshing
-  d3.event.preventDefault();
+	//  // Call function to apply all filters and rebuild the table
+	//  filterTable();
+	// }
 
-	// Use the form's inputs and dropdown selections to filter the data by multiple attributes
-	var results = tableData.filter(function(ufo) {
-		for (var key in multifilters) {
-			if (multifilters[key] === undefined || ufo[key] != multifilters[key])
-				return false;
-		}
-		return true;
-	})
-	
-	// Clear out current contents in the table
-	tbody.html("");
+	// function filterTable() {
 
-	// Handle no matching results
-	if (results.length === 0) {
-		tbody.text(`No ufo sightings found.`);
-	}
-	else {
-		results.forEach((ufo) => {
-			var row = tbody.append("tr");
-			Object.entries(ufo).forEach(([key, value]) => {
-				var cell = row.append("td");
-				cell.text(value);
-			})
-		})
-	}
-}
+	// 	// Prevent the page from refreshing
+	// 	d3.event.preventDefault();
 
-function clear() {
-	multifilters = {};
-	document.getElementById("filter-form").reset();
-	filterTable();
-}
+	// 	// Use the form's inputs and dropdown selections to filter the data by multiple attributes
+	// 	var results = tableData.filter(function(ufo) {
+	// 		for (var key in multifilters) {
+	// 			if (multifilters[key] === undefined || ufo[key] != multifilters[key])
+	// 				return false;
+	// 		}
+	// 		return true;
+	// 	})
+		
+	// 	// Clear out current contents in the table
+	// 	tbody.html("");
+
+	// 	// Handle no matching results
+	// 	if (results.length === 0) {
+	// 		tbody.text(`No ufo sightings found.`);
+	// 	}
+	// 	else {
+	// 		results.forEach((ufo) => {
+	// 			var row = tbody.append("tr");
+	// 			Object.entries(ufo).forEach(([key, value]) => {
+	// 				var cell = row.append("td");
+	// 				cell.text(value);
+	// 			})
+	// 		})
+	// 	}
+	// }
+
+	// function clear() {
+	// 	multifilters = {};
+	// 	document.getElementById("filter-form").reset();
+	// 	filterTable();
+	// }
+});

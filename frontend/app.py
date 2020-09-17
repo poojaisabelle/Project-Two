@@ -9,7 +9,7 @@ app = Flask(__name__)
 conn = "mongodb://localhost:27017"
 client = pymongo.MongoClient(conn)
 
-# connect to mongo db and collection
+# connect to mongo db and collections
 db = client.animal_visual_db
 vba_fauna = db.vba_fauna
 
@@ -19,15 +19,15 @@ vba_fauna = db.vba_fauna
 def index():
     return render_template("index.html")
 
-
+# Create route that renders dashboard.html template
 @app.route("/dashboard")
 def dashboard():
     return render_template("dashboard.html")
 
-
+# Create route that renders datapage.html template
 @app.route("/data")
-def data():
-    return render_template("data.html")
+def datapage():
+    return render_template("datapage.html")
 
 # Add api route to get vba fauna json
 @app.route("/api/v1.0/vbafauna")
