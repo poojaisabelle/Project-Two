@@ -12,6 +12,7 @@ client = pymongo.MongoClient(conn)
 # connect to mongo db and collections
 db = client.animal_visual_db
 vba_fauna = db.vba_fauna
+scraped_fauna = db.scraped_fauna
 
 
 # Create route that renders index.html template
@@ -29,18 +30,81 @@ def dashboard():
 def datapage():
     return render_template("datapage.html")
 
-# Add api route to get vba fauna json
+
+# Add api route to get VBA fauna json
 @app.route("/api/v1.0/vbafauna")
 def vbafauna():
-    # Convert all items in the vba_fauna collection to a list
-    species = list(vba_fauna.find())
+    # Convert all documents in the vba_fauna collection to a list
+    records = list(vba_fauna.find())
 
     # Convert mongo id object to string
-    for record in species:
+    for record in records:
         record["_id"] = str(record["_id"])
+    
+    # Return the json representation of the records
+    return jsonify(records)
+
+
+# Add api route to get the scraped fauna json
+@app.route("/api/v1.0/scrapedfauna")
+def scrapedfauna():
+    # Convert all documents in the scraped_fauna collection to a list
+    species = list(scraped_fauna.find())
+
+    # Convert mongo id object to string
+    for specie in species:
+        specie["_id"] = str(specie["_id"])
     
     # Return the json representation of the species
     return jsonify(species)
+
+
+# Add api route to get the vba fauna data aggregated by animal names
+@app.route("/api/v1.0/aggregation")
+def aggregation():
+		# Aggregate total sightings by each animal (represented in common names, science names, taxon ids and taxon types) over 5 years
+		metadata = list(
+			vba_fauna.aggregate(
+				[
+					{
+						"$group" : {
+								"_id" :"$comm_name",
+								"science_name": { "$first": "$sci_name" },
+								"taxon_id": { "$first": "$taxon_id" },
+								"taxon_type": { "$first": "$taxon_type" },
+								"totalSightings": { "$sum": "$totalcount" },
+						}
+					}
+				])
+			)
+
+		# Aggregate records by animal name
+		records_by_animal = list(
+			vba_fauna.aggregate(
+				[
+					{
+						"$group" : {
+							"_id" : "$comm_name",
+							"record_id": { "$push": "$record_id" },
+							"survey_id": { "$push": "$survey_id" },
+							"number_sightings": { "$push": "$totalcount" },
+							"long": { "$push": "$long" },
+							"lat": { "$push": "$lat" },
+							"start_year": { "$push": "$start_year" },
+							"start_mth": { "$push": "$start_mth" },
+							"start_date": { "$push": "$start_date" }
+						}
+					}
+				])
+			)
+
+		# Add an aggregation dictionary
+		aggregation_dict = {
+			"metadata": metadata,
+			"records": records_by_animal
+		}
+
+		return jsonify(aggregation_dict)
 
 if __name__ == "__main__":
     app.run(debug=True)
