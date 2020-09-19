@@ -2,6 +2,27 @@
 d3.json("/api/v1.0/vbafauna").then((importedData) => {
 	console.log(importedData);
 
+	var data = importedData;
+	// console.log(typeof (data));
+	// console.log(data);
+
+
+	var animalNames = data.map(row => row.comm_name);
+	// console.log(typeof(animalNames));
+
+	// Create arrays to store distinct countries, states, and shapes in abc order
+
+	var uniqueAnimals = d3.map(data, function(d){return d.comm_name;}).keys() 
+	console.log(uniqueAnimals);
+	console.log(typeof (uniqueAnimals));
+
+	var uniqueAnimals2 = [];
+	uniqueAnimals.forEach((uniqueAnimal) => {
+		Array.prototype.push.apply(uniqueAnimals2, uniqueAnimals.comm_name);
+	});
+
+	console.log(uniqueAnimals2);
+
 	//**** BELOW ARE TRACEY'S REFERENCES CODE. PLEASE REFER TO /IGNORE/ DELETE AS YOU LIKE
 
 	// var tableData = importedData;
