@@ -87,7 +87,7 @@ d3.json("/api/v1.0/vbafauna").then((importedData) => {
 	// 		}
 	// 		return true;
 	// 	})
-		
+
 	// 	// Clear out current contents in the table
 	// 	tbody.html("");
 
