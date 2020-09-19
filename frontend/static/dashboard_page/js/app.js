@@ -1,8 +1,18 @@
 // Use D3 fetch to read the JSON file
 // The data from the JSON file is arbitrarily named importedData as the argument
-d3.json("/api/v1.0/vbafauna").then((importedData) => {
+d3.json("/api/v1.0/vbafauna").then((vbadata) => {
 
-	console.log(importedData);
+	console.log(vbadata);
+});
+
+d3.json("/api/v1.0/scrapedfauna").then((scrapedData) => {
+
+	console.log(scrapedData);
+});
+
+d3.json("/api/v1.0/aggregation").then((data) => {
+	console.log(data);
+});
 
 	//**** BELOW ARE TRACEY'S REFERENCES CODE. PLEASE REFER TO /IGNORE/ DELETE AS YOU LIKE
 	// var data = importedData;
@@ -183,4 +193,3 @@ d3.json("/api/v1.0/vbafauna").then((importedData) => {
 
 	// 	Plotly.restyle('gauge', "value", wfreq);
 	// }
-});
