@@ -42,42 +42,14 @@
     </div>
     <div class="container">
       <div class="row margin-top-50">
-        <div class="col-md-2">
-          <aside class="filters">
-            <div class="panel panel-default">
-              <div class="panel-heading">Filter Search</div>
-              <div class="panel-body">
-                <form id="filter-form">
-                  <div class="form-group">
-                    <ul class="list-group" id="filters">
-                      <li class="filter list-group-item">
-                        <label for="country">Choose a Country</label>
-                        <select class="form-control" id="country">
-                          <option style="display:none"></option>
-                        </select>
-                      </li>
-                      <li class="filter list-group-item">
-                        <label for="state">Choose a State</label>
-                        <select class="form-control" id="state">
-                          <option style="display:none"></option>
-                        </select>
-                      </li>
-                      <li class="filter list-group-item">
-                        <label for="shape">Choose a Shape</label>
-                        <select class="form-control" id="shape">
-                          <option style="display:none"></option>
-                        </select>
-                      </li>
-                      <li class="filter list-group-item">
-                        <label for="city">Enter a City</label>
-                        <input class="form-control" id="city" type="text" placeholder="benton">
-                      </li>
-                      <li class="filter list-group-item">
-                        <label for="date">Enter a Date</label>
-                        <input class="form-control" id="datetime" type="text" placeholder="1/1/2010">
-                      </li>
-                    </ul>
-                  </div>
+        <div class="row">
+          <div class="col-md-2">
+            <div class="well">
+              <h5>Type of animal:</h5>
+              <!-- onchange="optionChanged(this.value)" -->
+              <select id="selDataset"></select>
+            </div>
+        
                   <button id="filter-btn" type="reset" class="btn btn-default">Clear Filters</button>
                 </form>
               </div>
