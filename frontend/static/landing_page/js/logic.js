@@ -20,8 +20,8 @@ var layers = {
 
 // Define a map object
 var myMap = L.map("map", {
-	center: [-36, 145],
-	zoom: 7,
+	center: [-37.5, 145],
+	zoom: 8,
   layers: [
 		layers.SWIFTPARROT
 	]
@@ -51,7 +51,7 @@ var totalsightings = swiftParrotData.map(row => +row.totalcount)
 console.log(totalsightings);
 
 for (var i = 0; i < swiftParrotData.length; i++) {
-	var circleMarkers = L.circle(
+	var circleMarkers = L.marker(
 		[latitude[i], longitude[i]], {
 			fillOpacity: 0.5,
 			fillColor: "rgb(240, 107, 107)",
