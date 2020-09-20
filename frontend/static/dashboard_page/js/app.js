@@ -1,38 +1,44 @@
+// // TO TEST WHETHER DATA CAN BE READ IN
 // // Use D3 fetch to read the JSON file
 // // The data from the JSON file is arbitrarily named importedData as the argument
 // function retrieveFaunaData(recordId) {
-// 	d3.json("/api/v1.0/vbafauna").then((importedData) => {
-// 		//console.log(importedData);
+// 	d3.json("/api/v1.0/aggregation").then((importedData) => {
+// 		console.log(importedData);
 // 	});
 // }
 // retrieveFaunaData(978)
 
+// 1. GAUGE CHART 
 
 function gaugeChart(animal) {
-	d3.json("/api/v1.0/vbafauna").then((importedData) => {
 
-		// Store the Data array in a new one
-		var data = importedData;
-		// console.log(data)
+	// Read in the JSON from the aggregation route 
+	d3.json("/api/v1.0/aggregation").then((data) => {
+		console.log(data);
+
+		// Obtain the metadata array that contains the 
+		// total sightings per species  
+		var metaData = data.metadata;
+		console.log(metaData)
+
+		// Filter by common name/ _id 
+		var result = metaData.filter(function(object) {
+			return object._id === animal;
+		});
+
+		console.log(result);
+		
+		// Obtain the totalsightings number 
+		totalSightings = result[0].totalSightings;
+		console.log(totalSightings);
 	
-		// Use nested function to aggregate number of sightings per unique species 
-		var totalSightings = d3.nest()
-			.key(function(d) { return d.comm_name; })
-			.rollup(function(v) { return d3.sum(v, function(d) { return d.totalcount; }); })
-			.entries(data);
-
-		console.log(totalSightings)
-		
-		// var totalSightings = animalSightings.map(row => row.value);
-		// console.log(totalSightings);
-		
 		// MAKE GUAGE CHART 
 		
 		var data = [
             {
               type: "indicator",
               mode: "gauge+number",
-              value: animalSightings,
+              value: totalSightings,
               title: { text: "<b>Rarity Scale</b> <br> Total Sightings in the last 5 years </br>", font: { size: 16 } },
               gauge: {
                 axis: { range: [1, 3000], tickwidth: 1, tickcolor: "black" },
@@ -67,37 +73,39 @@ gaugeChart(978)
 // Create an init function 
 function init() {
 
+	// Use D3 to select the dropdown menu 
+	var dropDown = d3.select("#selDataset");
+
 	// Use D3 to read in the JSON data 
-	d3.json("/api/v1.0/vbafauna").then((importedData) => {
+	d3.json("/api/v1.0/aggregation").then((data) => {
 
-		// Rename array 
-		var data = importedData;
-		// console.log(data);
+		// Access the metadata array 
+		var metaData = data.metadata;
 
-		// Create array to store distinct species names 
-		var uniqueAnimals = d3.map(data, function(d) {
-			return d.comm_name;
-		}).keys()
+		// Create array to store distinct species name 
+		var speciesName = metaData.map(row => row._id);
+		console.log(speciesName);
 
-		console.log(uniqueAnimals);
+		// // Create array to store distinct species names 
+		// var uniqueAnimals = d3.map(metaData, function(d) {
+		// 	return d._id;
+		// }).keys()
+		// console.log(uniqueAnimals);
 
-		// Use D3 to select the dropdown menu 
-		var dropDown = d3.select("#selDataset");
-
-		uniqueAnimals.forEach(function(name) {
+		speciesName.forEach(function(name) {
 			dropDown.append("option").text(name).property("value")
-
 		});
 
-		var nameChosen = dropDown.node().value;
+		var animalChosen = dropDown.node().value;
+		console.log(animalChosen);
 
-		gaugeChart(nameChosen);
+		gaugeChart(animalChosen);
 
 	});
 }
 
-function optionChanged(newName) {
-	gaugeChart(newName);
+function optionChanged(newAnimal) {
+	gaugeChart(newAnimal);
 }
 
 
