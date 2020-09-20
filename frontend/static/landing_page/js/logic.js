@@ -1,69 +1,141 @@
-d3.json("/api/v1.0/vbafauna").then(function(data) {
-	console.log(data);
-
-var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
-  attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
-  maxZoom: 18,
-  id: "outdoors-v11",
-  accessToken: API_KEY
-});
-
-// Create a baseMaps object
-var baseMaps = {
-	"Outdoors": outdoors
-};
-
-// Initialize all of the LayerGroups we'll be using
-var layers = {
-	SWIFTPARROT: new L.LayerGroup()
-};
-
-// Define a map object
-var myMap = L.map("map", {
-	center: [-37.5, 145],
-	zoom: 8,
-  layers: [
-		layers.SWIFTPARROT
-	]
-});
-
-// Add satellite layer to the map
-outdoors.addTo(myMap);
-
-// Create an overlay object to add to the layer control
-var overlayMaps = {
-	"Swift Parrot": layers.SWIFTPARROT
-};
-
-// Pass our map layers into our layer control
-// Add the layer control to the map
-L.control.layers(baseMaps, overlayMaps, {
-  collapsed: false
-}).addTo(myMap);
+d3.json("/api/v1.0/vbafauna").then(function(vbadata) {
 
 
-// Filter Swift Parrot data
-var swiftParrotData = data.filter(row => row.comm_name == "Swift Parrot");
-var latitude = swiftParrotData.map(row => +row.lat);
-var longitude = swiftParrotData.map(row => +row.long);
-var totalsightings = swiftParrotData.map(row => +row.totalcount)
+	// Create function to filter data for a specific animal from vbafauna api
+	function filterData(animal) {
 
-console.log(totalsightings);
-
-for (var i = 0; i < swiftParrotData.length; i++) {
-	var circleMarkers = L.marker(
-		[latitude[i], longitude[i]], {
-			fillOpacity: 0.5,
-			fillColor: "rgb(240, 107, 107)",
-			color: "rgb(240, 107, 107)",
-			radius: totalsightings[i] * 1000
+		var animalData = vbadata.filter(row => row.comm_name == animal);
+		var filteredData = animalData.map(function(d){
+			return {
+				common_name: d.comm_name,
+				date: d.start_date,
+				latitude: d.lat,
+				longitude: d.long,
+				totalsightings: d.totalcount      
+			}
 		});
 
-	// Add the new marker to the appropriate layer
-	circleMarkers.addTo(layers.SWIFTPARROT);
-}
+		return filteredData;
+	}
 
-})	
+
+	// Create function to create an layer for each filtered animal data
+	function createLayer(filteredData) {
+		console.log("Creating Frog Layer");
+	
+		var markers = L.markerClusterGroup();
+	
+		for (var i = 0; i < filteredData.length; i++) {
+			var record = filteredData[i];
+	
+			var animalMarker = L.marker([record.latitude, record.longitude]);
+				
+			// bind a pop-up to show the some information on the sighting record
+			animalMarker.bindPopup(record.comm_name);
+	
+			// Add a new marker to the cluster group and bind a pop-up
+			markers.addLayer(animalMarker);    
+		}
+	
+		return markers;
+	}
+
+
+	function createMap(animalLayer) {
+		
+		// Create BASEMAP layers
+		var outdoors = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+			attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+			maxZoom: 18,
+			id: "outdoors-v11",
+			accessToken: API_KEY
+		});
+
+		var streetmap = L.tileLayer("https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+			attribution: "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+			tileSize: 512,
+			maxZoom: 18,
+			zoomOffset: -1,
+			id: "mapbox/streets-v11",
+			accessToken: API_KEY
+		});
+
+		var darkmap = L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}", {
+			attribution: "Map data &copy; <a href=\"https://www.openstreetmap.org/\">OpenStreetMap</a> contributors, <a href=\"https://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, Imagery © <a href=\"https://www.mapbox.com/\">Mapbox</a>",
+			maxZoom: 18,
+			id: "dark-v10",
+			accessToken: API_KEY
+		});
+
+
+		// Create a baseMaps object
+		var baseMaps = {
+			"Outdoors": outdoors,
+			"Street Map": streetmap,
+			"Dark Map": darkmap
+		};
+
+		// Create an overlay object to add to the layer control
+		var overlayMaps = {
+			"Swift Parrot": animalLayer
+		};
+
+		// // Initialize all of the LayerGroups we'll be using
+		// var layers = {
+		// 	SWIFTPARROT: new L.LayerGroup()
+		// };
+
+		// Define a map object
+		var myMap = L.map("map", {
+			center: [-37.5, 145],
+			zoom: 8,
+			layers: [outdoors, animalLayer]
+		});
+
+		// // Add satellite layer to the map
+		// outdoors.addTo(myMap);
+
+		// // Create an overlay object to add to the layer control
+		// var overlayMaps = {
+		// 	"Swift Parrot": layers.SWIFTPARROT
+		// };
+
+		// Pass our map layers into our layer control
+		// Add the layer control to the map
+		L.control.layers(baseMaps, overlayMaps, {
+			collapsed: false
+		}).addTo(myMap);
+	}
+	
+	var filteredData = filterData("Swift Parrot");
+	var animalLayer = createLayer(filteredData);
+	createMap(animalLayer);
+
+});
+
+// // Filter Swift Parrot data
+// var swiftParrotData = data.filter(row => row.comm_name == "Swift Parrot");
+// var latitude = swiftParrotData.map(row => +row.lat);
+// var longitude = swiftParrotData.map(row => +row.long);
+// var totalsightings = swiftParrotData.map(row => +row.totalcount)
+
+// console.log(totalsightings);
+
+// for (var i = 0; i < swiftParrotData.length; i++) {
+// 	var circleMarkers = L.marker(
+// 		[latitude[i], longitude[i]], {
+// 			fillOpacity: 0.5,
+// 			fillColor: "rgb(240, 107, 107)",
+// 			color: "rgb(240, 107, 107)",
+// 			radius: totalsightings[i] * 1000
+// 		});
+
+// 	// Add the new marker to the appropriate layer
+// 	circleMarkers.addTo(layers.SWIFTPARROT);
+// }
+
+// })	
+
 
 
 // // Create function to color cicles according to earthquake magnitudes
