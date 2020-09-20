@@ -89,14 +89,42 @@ d3.json("/api/v1.0/vbafauna").then(function(vbadata) {
 		var myMap = L.map("map", {
 			center: [-37.5, 145],
 			zoom: 8,
-			layers: [outdoors, animalLayer],
-			timeDimension: true,
-			timeDimensionOptions: {
-        timeInterval: "2015-01-01/2020-03-30",
-        period: "PT1H"
-			},
-			timeDimensionControl: true,
+			fullscreenControl: true,
+			layers: [outdoors, animalLayer]
+			// timeDimension: true,
+			// timeDimensionOptions: {
+      //   timeInterval: "2015-01-01/2020-03-30",
+      //   period: "P1D"
+			// },
+			// timeDimensionControl: true,
 		});
+
+		var timeDimension = new L.TimeDimension({
+			timeInterval: "2015-01-01/2020-03-30",
+			period: "P1D"
+		});
+
+		myMap.timeDimension = timeDimension;
+
+		var player = new L.TimeDimension.Player({
+			transitionTime: 100, 
+			loop: false,
+			startOver:true
+		}, timeDimension);
+
+		var timeDimensionControlOptions = {
+			player:        player,
+			timeDimension: timeDimension,
+			position:      'bottomleft',
+			autoPlay:      true,
+			minSpeed:      1,
+			speedStep:     0.5,
+			maxSpeed:      15,
+			timeSliderDragUpdate: true
+		};
+
+		var timeDimensionControl = new L.Control.TimeDimension(timeDimensionControlOptions);
+		myMap.addControl(timeDimensionControl);
 
 		// // Add satellite layer to the map
 		// outdoors.addTo(myMap);
