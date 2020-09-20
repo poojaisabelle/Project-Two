@@ -12,6 +12,9 @@ d3.json("/api/v1.0/scrapedfauna").then((scrapedData) => {
 
 d3.json("/api/v1.0/aggregation").then((data) => {
 	console.log(data);
+
+	var unique_animals = data.metadata.map(row => row["_id"]);
+	console.log(unique_animals);
 });
 
 	//**** BELOW ARE TRACEY'S REFERENCES CODE. PLEASE REFER TO /IGNORE/ DELETE AS YOU LIKE
