@@ -89,7 +89,13 @@ d3.json("/api/v1.0/vbafauna").then(function(vbadata) {
 		var myMap = L.map("map", {
 			center: [-37.5, 145],
 			zoom: 8,
-			layers: [outdoors, animalLayer]
+			layers: [outdoors, animalLayer],
+			timeDimension: true,
+			timeDimensionOptions: {
+        timeInterval: "2015-01-01/2020-03-30",
+        period: "PT1H"
+			},
+			timeDimensionControl: true,
 		});
 
 		// // Add satellite layer to the map
