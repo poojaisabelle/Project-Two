@@ -91,11 +91,11 @@ function filterData(data, animal) {
 	var animalData = data.filter(row => row.comm_name == animal);
 	var filteredData = animalData.map(function(d) {
 		return {
-			common_name: d.comm_name,
-			date: d.start_date,
+			comm_name: d.comm_name,
+			start_date: d.start_date,
 			latitude: d.lat,
 			longitude: d.long,
-			totalsightings: d.totalcount      
+			totalcount: d.totalcount      
 		}
 	});
 
@@ -105,7 +105,6 @@ function filterData(data, animal) {
 
 // Create function to create an layer for each filtered animal data
 function createLayer(filteredData) {
-	console.log("Creating Frog Layer");
 
 	var markers = L.markerClusterGroup();
 
@@ -115,14 +114,10 @@ function createLayer(filteredData) {
 		var animalMarker = L.marker([record.latitude, record.longitude]);
 		
 		// bind a pop-up to show the some information on the sighting record
-		animalMarker.bindPopup(record.comm_name);
-
-		// 		// Bind a popup to the marker that will  display on click. This will be rendered as HTML
-		// 		circleMarkers.bindPopup("<h3>" + earthFeatures[i].properties.place +
-		// 										"</h3><hr><p>" + new Date(earthFeatures[i].properties.time) + 
-		// 										'<br>' + '[' + coordinates[1] + ', ' + coordinates[0] + ']' + "</p>");
-		// 	};
-		// });
+		animalMarker.bindPopup("<h4>" + record.comm_name +
+														"</h4><hr><p>" + new Date(record.start_date) + 
+														'<br>' + '[' + record.latitude + ', ' + record.longitude + ']' +
+														'<br>' + 'Total Sightings: ' + record.totalcount + "</p>");
 
 		// Add a new marker to the cluster group and bind a pop-up
 		markers.addLayer(animalMarker);    
@@ -144,27 +139,3 @@ d3.json("/api/v1.0/vbafauna").then(function(vbadata) {
 		markers.addTo(value);
 	});
 });
-
-
-
-
-
-
-
-
-// 	function createMap(animalLayer) {
-		
-		
-	
-// 	var filteredData1 = filterData("Swift Parrot");
-// 	var ParrotLayer = createLayer(filteredData1);
-// 	createMap(ParrotLayer);
-
-// 	var filteredData2 = filterData("Mallee Emu-wren");
-// 	var MalleeLayer = createLayer(filteredData2);
-// 	createMap(MalleeLayer);
-
-// 	// var filteredSwiftParrot = filterData("Swift Parrot");
-// 	// var SwiftParrotLayer = createLayer(filteredSwiftParrot);
-// 	// createMap(SwiftParrotLayer);
-// });
