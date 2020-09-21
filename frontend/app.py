@@ -68,11 +68,11 @@ def aggregation():
 				[
 					{
 						"$group" : {
-								"_id" :"$comm_name",
-								"science_name": { "$first": "$sci_name" },
-								"taxon_id": { "$first": "$taxon_id" },
-								"taxon_type": { "$first": "$taxon_type" },
-								"totalSightings": { "$sum": "$totalcount" },
+							"_id" :"$comm_name",
+							"science_name": { "$first": "$sci_name" },
+							"taxon_id": { "$first": "$taxon_id" },
+							"taxon_type": { "$first": "$taxon_type" },
+							"totalSightings": { "$sum": "$totalcount" },
 						}
 					}
 				])
@@ -105,6 +105,7 @@ def aggregation():
 		}
 
 		return jsonify(aggregation_dict)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
