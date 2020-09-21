@@ -47,7 +47,7 @@ var layers = {
 
 // Define a map object
 var myMap = L.map("map", {
-	center: [-37, 145],
+	center: [-36.2, 145],
 	zoom: 7,
 	layers: [
 		layers.HOODED_PLOVER,
@@ -115,7 +115,7 @@ function createLayer(filteredData) {
 		
 		// bind a pop-up to show the some information on the sighting record
 		animalMarker.bindPopup("<h4>" + record.comm_name +
-														"</h4><hr><p>" + new Date(record.start_date) + 
+														"</h4><hr><p>" + record.start_date + 
 														'<br>' + '[' + record.latitude + ', ' + record.longitude + ']' +
 														'<br>' + 'Total Sightings: ' + record.totalcount + "</p>");
 
