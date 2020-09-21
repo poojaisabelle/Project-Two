@@ -1,12 +1,45 @@
-// // TO TEST WHETHER DATA CAN BE READ IN
-// // Use D3 fetch to read the JSON file
-// // The data from the JSON file is arbitrarily named importedData as the argument
-// function retrieveFaunaData(recordId) {
-// 	d3.json("/api/v1.0/aggregation").then((importedData) => {
-// 		console.log(importedData);
-// 	});
-// }
-// retrieveFaunaData(978)
+// Create a function to retreieve "fun facts" for each species 
+function getFunFacts(animal) {
+	d3.json("/api/v1.0/aggregation").then((data) => {
+
+		// Obtain the metadata array that contains the taxon ID 
+		// and the scientific name 
+		var metaData = data.metadata;
+		//console.log(metaData[0]);
+
+		// Filter the metadata by common name 
+		result = metaData.filter(function(d) {
+			return d._id === animal;
+		});
+
+		console.log(result);
+
+		// Clear the panel before a new animal is chosen 
+		var funFactsPanel = d3.select("#species-metadata");
+		funFactsPanel.html("");
+
+		// Create an empty array that will contain the scientific name 
+		// and Taxon ID of each species
+		//var funFacts = [];
+		// Append the taxon id and scientific name
+
+
+		
+		// Create array to store scientific name and taxon id  
+		Object.entries(result[0]).forEach((key) => {
+
+			// Append fun fact info to the panel and format 
+			// console.log(key);
+			funFactsPanel.append("p").text(key[0] + ": " + key[1]);
+			});
+
+
+
+	});
+}
+getFunFacts(978);
+
+
 
 // 1. GAUGE CHART 
 
@@ -70,6 +103,21 @@ function gaugeChart(animal) {
 }
 gaugeChart(978)
 
+
+// // 2. BAR CHART 
+// function barChart(animal) {
+// 	d3.json("/api/v1.0/aggregation").then((Data) => {
+
+// 		//
+
+
+
+
+// 	});
+// }
+
+
+
 // Create an init function 
 function init() {
 
@@ -100,13 +148,14 @@ function init() {
 		console.log(animalChosen);
 
 		gaugeChart(animalChosen);
+		getFunFacts(animalChosen);
 
 	});
 }
 
 function optionChanged(newAnimal) {
 	gaugeChart(newAnimal);
+	getFunFacts(newAnimal);
 }
-
 
 init();
