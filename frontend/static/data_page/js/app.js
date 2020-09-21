@@ -29,20 +29,20 @@ d3.json("/api/v1.0/vbafauna").then((importedData) => {
 
 	// Create list of unique taxon type
 	var taxons = data.map(row => row.taxon_type);
-	console.log(typeof(taxons));
+	console.log(typeof (taxons));
 
 	// Create list of unique taxon type
 	var uniqueTaxons = d3.map(data, function (d) { return d.taxon_type; }).keys()
 
 	// Get names of taxon types  for drop down
 	var dropdown2 = d3.select("#selDataset2")
-	.selectAll("option")
-	.data(uniqueTaxons)
-	.enter().append("option")
-	.attr("value", function (d) { return d.taxon_type; })
-	.text(function (d) {
-		return d[0].toUpperCase() + d.slice(1, d.length); // capitalize 1st letter
-	});
+		.selectAll("option")
+		.data(uniqueTaxons)
+		.enter().append("option")
+		.attr("value", function (d) { return d.taxon_type; })
+		.text(function (d) {
+			return d[0].toUpperCase() + d.slice(1, d.length); // capitalize 1st letter
+		});
 
 	var initialData2 = uniqueTaxons[[0]];
 
@@ -52,98 +52,94 @@ d3.json("/api/v1.0/vbafauna").then((importedData) => {
 
 	// Create list of unique months
 	var uniqueMonths = d3.map(data, function (d) { return d.start_mth; }).keys()
- 
+
 	// Get names of months for drop down
 	var dropdown3 = d3.select("#selDataset3")
-	.selectAll("option")
-	.data(uniqueMonths)
-	.enter().append("option")
-	.attr("value", function (d) { return d.start_mth; })
-	.text(function (d) {
-		return d[0].toUpperCase() + d.slice(1, d.length); // capitalize 1st letter
-	});
+		.selectAll("option")
+		.data(uniqueMonths)
+		.enter().append("option")
+		.attr("value", function (d) { return d.start_mth; })
+		.text(function (d) {
+			return d[0].toUpperCase() + d.slice(1, d.length); // capitalize 1st letter
+		});
 
 	var initialData2 = uniqueMonths[[0]];
 });
 
 // Insert data table
 // from data.js
-var tableData = data;
+//var tableData = data;
 
 // Attach HTML table and add rows for UFO data
-var tbody = d3.select("tbody");
-console.log("Yeah that worked")
+d3.json("/api/v1.0/vbafauna").then((importedData) => {
+	console.log(importedData);
 
-tableData.forEach((animalData) => {
-    var row = tbody.append("tr");
-    Object.entries(animalData).forEach(([key, value]) => {
-      var cell = row.append("td");
-      cell.text(value);
-    });
-  });
+	var data = importedData;
+	var tbody = d3.select("tbody");
+	console.log("Yeah that worked")
 
-// Listen for events and search date column for matches to user input
+	data.forEach((data) => {
+		var row = tbody.append("tr");
+		Object.entries(data).forEach(([key, value]) => {
+			var cell = row.append("td");
+			cell.text(value);
+		});
+	});
 
-// Select the filter button
-var button = d3.select("#filter-btn");
+	// Listen for events and search date column for matches to user input
 
-// Select the form
-var form = d3.select("#");
+	// Select the filter button for animals
+	var button = d3.select("#selDataset1");
 
-// Create event handlers 
-button.on("click", runEnter);
-form.on("submit", runEnter);
+	// Select the form
+	// var form = d3.select("#");
 
-// Complete the event handler function for the form
-function runEnter() {
+	// Create event handlers 
+	//button.on("click", runEnter);
+	//form.on("submit", runEnter);
 
-  // Prevent the page from refreshing
-  d3.event.preventDefault();
+	// Complete the event handler function for the form
+	function onchange() {
 
-  // Select the input element, property, and get the raw HTML node
-  var inputAnimal = d3.select("#datetime").property("value");
-  var inputType = d3.select("#city").property("value").toLowerCase();
-  var inputMonth = d3.select("#state").property("value").toLowerCase();
+		// Prevent the page from refreshing
+		// d3.event.preventDefault();
 
-  // console.log(inputDate,inputCity,inputState,inputCountry,inputShape);
+		// Select the input element, property, and get the raw HTML node
+		var inputAnimal = d3.select("#selDataset1").property("value");
+		var inputType = d3.select("#selDataset2").property("value").toLowerCase();
+		var inputMonth = d3.select("#selDataset3").property("value").toLowerCase();
 
-  // Use the form input to filter the data by 5 fields
-  filteredData = tableData;
+		// console.log(inputDate,inputCity,inputState,inputCountry,inputShape);
 
-  if (inputDate) {
-    filteredData = filteredData.filter(sighting => sighting.datetime == inputDate);
-  }
+		// Use the form input to filter the data by 5 fields
+		filteredData = data;
 
-  if (inputCity) {
-    filteredData = filteredData.filter(sighting => sighting.city == inputCity);
-  }
+		if (inputAnimal) {
+			filteredData = filteredData.filter(data => data.comm_name == inputAnimal);
+		}
 
-  if (inputState) {
-    filteredData = filteredData.filter(sighting => sighting.state == inputState);
-  }
+		if (inputType) {
+			filteredData = filteredData.filter(data => data.taxon_type == inputType);
+		}
 
-  if (inputCountry) {
-    filteredData = filteredData.filter(sighting => sighting.country == inputCountry);
-  }
+		if (inputMonth) {
+			filteredData = filteredData.filter(data => data.start_mth == inputMonth);
+		}
 
-  if (inputShape) {
-    filteredData = filteredData.filter(sighting => sighting.shape == inputShape);
-  }
-
-  // Show filtered results only in main table
-  if (filteredData.length == 0) {
-      // console.log(`No results for the parameters you have provided - ${inputDate}, ${inputCity}, ${inputState}, ${inputCountry}, ${inputShape}.`);
-      tbody.html("");
-      tbody.text(`There are no results for the parameters you have provided - ${inputDate}, ${inputCity}, ${inputState}, ${inputCountry}, ${inputShape}.`);
-    } else {
-  tbody.html("");
-  filteredData.forEach((report) => {
-    var row = tbody.append('tr');
-    Object.entries(report).forEach(([key, value]) => {
-        // console.log(key, value);
-        var cell = row.append('td');
-        cell.text(value);
-    });
-  });
-};
-};
+		// Show filtered results only in main table
+		//   if (filteredData.length == 0) {
+		//       // console.log(`No results for the parameters you have provided - ${inputDate}, ${inputCity}, ${inputState}, ${inputCountry}, ${inputShape}.`);
+		//       tbody.html("");
+		//       tbody.text(`There are no results for the parameters you have provided - ${inputDate}, ${inputCity}, ${inputState}, ${inputCountry}, ${inputShape}.`);
+		//     } else {
+		tbody.html("");
+		filteredData.forEach((report) => {
+			var row = tbody.append('tr');
+			Object.entries(report).forEach(([key, value]) => {
+				// console.log(key, value);
+				var cell = row.append('td');
+				cell.text(value);
+			});
+		});
+	};
+});
