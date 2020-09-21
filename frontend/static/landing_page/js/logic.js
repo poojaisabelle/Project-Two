@@ -145,6 +145,9 @@ d3.json("/api/v1.0/vbafauna").then(function(vbadata) {
 	var animalLayer = createLayer(filteredData);
 	createMap(animalLayer);
 
+	// var filteredSwiftParrot = filterData("Swift Parrot");
+	// var SwiftParrotLayer = createLayer(filteredSwiftParrot);
+	// createMap(SwiftParrotLayer);
 });
 
 // // Filter Swift Parrot data
