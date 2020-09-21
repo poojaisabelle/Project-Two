@@ -5,7 +5,11 @@ function getFunFacts(animal) {
 		// Obtain the metadata array that contains the taxon ID 
 		// and the scientific name 
 		var metaData = data.metadata;
-		//console.log(metaData[0]);
+		console.log(metaData);
+
+		// Create empty arrays to store id,taxon id and scientific name 
+		var commonName = []
+
 
 		// Filter the metadata by common name 
 		result = metaData.filter(function(d) {
@@ -14,30 +18,52 @@ function getFunFacts(animal) {
 
 		console.log(result);
 
+		// Get the first object 
+		object = result[0];
+		// console.log(object);
+
+
 		// Clear the panel before a new animal is chosen 
 		var funFactsPanel = d3.select("#species-metadata");
 		funFactsPanel.html("");
 
-		// Create an empty array that will contain the scientific name 
-		// and Taxon ID of each species
-		//var funFacts = [];
-		// Append the taxon id and scientific name
 
-
-		
 		// Create array to store scientific name and taxon id  
-		Object.entries(result[0]).forEach((key) => {
+		Object.entries(object).forEach((key) => {
 
 			// Append fun fact info to the panel and format 
 			// console.log(key);
-			funFactsPanel.append("p").text(key[0] + ": " + key[1]);
+			funFactsPanel
+				.append("p")
+				.text(`${key[0].replace(/_/g, " ").toUpperCase()}: ${key[1]}`);
 			});
+	});
+}
+getFunFacts(978);
 
+// IMAGE AND INFO SCRAPED 
+function getImageInfo(animal) {
+	d3.json("/api/v1.0/scrapedfauna").then((scrapedData) => {
+		console.log(scrapedData);
+
+		// Rename array 
+		animalInfo = scrapedData;
+
+		// Filter to animal name 
+		result = animalInfo.filter(row => row.animal_name === animal)[0];
+		console.log(result);
+
+		//
+
+
+
+
+		
 
 
 	});
 }
-getFunFacts(978);
+getImageInfo(978);
 
 
 
@@ -47,23 +73,23 @@ function gaugeChart(animal) {
 
 	// Read in the JSON from the aggregation route 
 	d3.json("/api/v1.0/aggregation").then((data) => {
-		console.log(data);
+		//console.log(data);
 
 		// Obtain the metadata array that contains the 
 		// total sightings per species  
 		var metaData = data.metadata;
-		console.log(metaData)
+		//console.log(metaData)
 
 		// Filter by common name/ _id 
 		var result = metaData.filter(function(object) {
 			return object._id === animal;
 		});
 
-		console.log(result);
+		//console.log(result);
 		
 		// Obtain the totalsightings number 
 		totalSightings = result[0].totalSightings;
-		console.log(totalSightings);
+		//console.log(totalSightings);
 	
 		// MAKE GUAGE CHART 
 		
@@ -103,18 +129,39 @@ function gaugeChart(animal) {
 }
 gaugeChart(978)
 
+// // 2. BUBBLE CHART 
+// function buildBubbleChart(animal) {
 
-// // 2. BAR CHART 
-// function barChart(animal) {
-// 	d3.json("/api/v1.0/aggregation").then((Data) => {
+// 	// Use D3 to read in the JSON data 
+// 	d3.json("/api/v1.0/aggregation").then((data) => {
 
-// 		//
+// 		// Access the records array 
+// 		var records = data.records;
+// 		console.log(records);
+
+// 		// Filter to specific animal 
+// 		var result = records.filter(row => row._id === animal)[0];
+
+// 		// Obtain date 
+// 		var date = result.start_date;
+
+// 		// obtain number of sightings 
+// 		var numSightings = result.number_sightings;
 
 
-
+// 		var data = [
+// 			{
+// 			  x: date,
+// 			  y: numSightings,
+// 			  type: 'scatter'
+// 			}
+// 		  ];
+		  
+// 		  Plotly.newPlot('bubble', data);		
 
 // 	});
 // }
+// buildBubbleChart(978);
 
 
 
@@ -132,7 +179,7 @@ function init() {
 
 		// Create array to store distinct species name 
 		var speciesName = metaData.map(row => row._id);
-		console.log(speciesName);
+		//console.log(speciesName);
 
 		// // Create array to store distinct species names 
 		// var uniqueAnimals = d3.map(metaData, function(d) {
@@ -145,10 +192,12 @@ function init() {
 		});
 
 		var animalChosen = dropDown.node().value;
-		console.log(animalChosen);
+		//console.log(animalChosen);
 
 		gaugeChart(animalChosen);
 		getFunFacts(animalChosen);
+		getImageInfo(animalChosen);
+		// buildBubbleChart(animalChosen);
 
 	});
 }
@@ -156,6 +205,8 @@ function init() {
 function optionChanged(newAnimal) {
 	gaugeChart(newAnimal);
 	getFunFacts(newAnimal);
+	getImageInfo(newAnimal);
+	// buildBubbleChart(newAnimal);
 }
 
 init();
