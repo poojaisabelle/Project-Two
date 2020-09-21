@@ -47,8 +47,8 @@ var layers = {
 
 // Define a map object
 var myMap = L.map("map", {
-	center: [-37.5, 145],
-	zoom: 8,
+	center: [-37, 145],
+	zoom: 7,
 	layers: [
 		layers.HOODED_PLOVER,
 		layers.GIANT_BURROWING_FROG,
