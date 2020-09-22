@@ -110,7 +110,7 @@ d3.json("/api/v1.0/vbafauna").then((importedData) => {
 		// Use the drop down to filter the data 
 		filteredData = data;
 
-		filteredData = filteredData.filter(data => data.comm_name == initialData1);
+		filteredData = filteredData.filter(data => data.comm_name == inputAnimal);
 		}
 
 		// Show filtered results only in main table
@@ -129,9 +129,9 @@ d3.json("/api/v1.0/vbafauna").then((importedData) => {
 			});
 		});
 	});
-	
+
 // Complete the event handler function for the taxon drop down
-function optionChanged2(taxon) {
+function optionChanged2(inputTaxon) {
 
 	// Prevent the page from refreshing
 	// d3.event.preventDefault();
@@ -142,7 +142,7 @@ function optionChanged2(taxon) {
 	// Use the drop down to filter the data 
 	filteredData = data;
 
-	filteredData = filteredData.filter(data => data.taxon_type == initialData2);
+	filteredData = filteredData.filter(data => data.taxon_type == inputTaxon);
 
 	// Show filtered results only in main table
 	//   if (filteredData.length == 0) {
@@ -162,7 +162,7 @@ function optionChanged2(taxon) {
 };
 
 // Complete the event handler function for the aniaml drop down
-function optionChanged3(month) {
+function optionChanged3(inputMonth) {
 
 	// Prevent the page from refreshing
 	// d3.event.preventDefault();
@@ -172,7 +172,7 @@ function optionChanged3(month) {
 
 	// Use the drop down to filter the data 
 	filteredData = data;
-	filteredData = filteredData.filter(data => data.start_mth == initialData3);
+	filteredData = filteredData.filter(data => data.start_mth == inputMonth);
 
 	// Show filtered results only in main table
 	//   if (filteredData.length == 0) {
@@ -191,6 +191,12 @@ function optionChanged3(month) {
 	});
 };
 
+myChart.draw();
+d3.selectAll('.dropdown-submenu.year > a').on("click", function(d) {
+	year = this.text;
+	chartsUpdate();
+  colsUpdate();
+});
 // Create an init function 
 // function init() {
 
