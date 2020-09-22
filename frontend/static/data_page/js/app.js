@@ -204,7 +204,7 @@ function init() {
 				return d[0].toUpperCase() + d.slice(1, d.length); // capitalize 1st letter
 		});
 	
-		var initialData1 = uniqueAnimals[[0]];
+		//var initialData1 = uniqueAnimals[[0]];
 	
 		// Create list of unique taxon type
 		//var taxons = data.map(row => row.taxon_type);
@@ -223,7 +223,7 @@ function init() {
 				return d[0].toUpperCase() + d.slice(1, d.length); // capitalize 1st letter
 			});
 	
-		var initialData2 = uniqueTaxons[[0]];
+		//var initialData2 = uniqueTaxons[[0]];
 	
 		// 	Create list of unique months
 		// var months = data.map(row => row.start_mth);
@@ -242,7 +242,7 @@ function init() {
 				return d[0].toUpperCase() + d.slice(1, d.length); // capitalize 1st letter
 			});
 	
-		var initialData3 = uniqueMonths[[0]];
+		//var initialData3 = uniqueMonths[[0]];
 	});
 
 		var animalChosen = dropdown1.node().value;
