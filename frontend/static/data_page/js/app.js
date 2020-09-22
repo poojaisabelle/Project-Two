@@ -89,7 +89,7 @@ d3.json("/api/v1.0/vbafauna").then((importedData) => {
 	// Listen for events and search date column for matches to user input
 
 	// Select the filter button for animals
-	var button = d3.select("#selDataset1");
+	//var button = d3.select("#selDataset1");
 
 	// Select the form
 	// var form = d3.select("#");
@@ -99,7 +99,7 @@ d3.json("/api/v1.0/vbafauna").then((importedData) => {
 	//form.on("submit", runEnter);
 
 	// Complete the event handler function for the form
-	function onchange() {
+	function optionChanged() {
 
 		// Prevent the page from refreshing
 		// d3.event.preventDefault();
@@ -143,3 +143,43 @@ d3.json("/api/v1.0/vbafauna").then((importedData) => {
 		});
 	};
 });
+
+// Create an init function 
+function init1() {
+
+	// Use D3 to select the dropdown menu 
+	var dropdown1 = d3.select("#selDataset1");
+
+	// Use D3 to read in the JSON data 
+	d3.json("/api/v1.0/vbafauna").then((data) => {
+
+		// Access the common name array
+		var animalData = data.comm_name;
+
+		// Create array to store distinct species name 
+		var speciesName = animalData.map(row => row.comm_name);
+		//console.log(speciesName);
+
+		// // Create array to store distinct species names 
+		// var uniqueAnimals = d3.map(metaData, function(d) {
+		// 	return d._id;
+		// }).keys()
+		// console.log(uniqueAnimals);
+
+		speciesName.forEach(function(name) {
+			dropDown.append("option").text(name).property("value")
+		});
+
+		var animalChosen = dropDown.node().value;
+		//console.log(animalChosen);
+
+		optionChanged(animalChosen);
+
+	});
+}
+
+function optionChanged(newAnimal) {
+	optionChanged(newAnimal);
+}
+
+init1();
