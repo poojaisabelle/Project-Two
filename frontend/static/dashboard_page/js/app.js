@@ -5,28 +5,21 @@ function getFunFacts(animal) {
 		// Obtain the metadata array that contains the taxon ID 
 		// and the scientific name 
 		var metaData = data.metadata;
-		console.log(metaData);
-
-		// Create empty arrays to store id,taxon id and scientific name 
-		var commonName = []
-
+		// console.log(metaData);
 
 		// Filter the metadata by common name 
 		result = metaData.filter(function(d) {
 			return d._id === animal;
 		});
-
-		console.log(result);
+		// console.log(result);
 
 		// Get the first object 
 		object = result[0];
 		// console.log(object);
 
-
 		// Clear the panel before a new animal is chosen 
 		var funFactsPanel = d3.select("#species-metadata");
 		funFactsPanel.html("");
-
 
 		// Create array to store scientific name and taxon id  
 		Object.entries(object).forEach((key) => {
@@ -37,13 +30,14 @@ function getFunFacts(animal) {
 				.append("p")
 				.text(`${key[0].replace(/_/g, " ").toUpperCase()}: ${key[1]}`);
 			});
-	});
+	}); //.catch( error =>  console.log(error));
 }
 getFunFacts(978);
 
 // IMAGE AND INFO SCRAPED 
 function getImageInfo(animal) {
 	d3.json("/api/v1.0/scrapedfauna").then((scrapedData) => {
+
 		console.log(scrapedData);
 
 		// Rename array 
@@ -51,16 +45,14 @@ function getImageInfo(animal) {
 
 		// Filter to animal name 
 		result = animalInfo.filter(row => row.animal_name === animal)[0];
-		console.log(result);
 
-		//
+		if (result === undefined) {
+			return;
+		}
+		// console.log(result.image_url);
 
-
-
-
-		
-
-
+		d3.select(".img-gallery")
+			.html(`<img src="${result.image_url}">`);	
 	});
 }
 getImageInfo(978);
@@ -88,11 +80,10 @@ function gaugeChart(animal) {
 		//console.log(result);
 		
 		// Obtain the totalsightings number 
-		totalSightings = result[0].totalSightings;
+		totalSightings = result[0].total_sightings;
 		//console.log(totalSightings);
 	
 		// MAKE GUAGE CHART 
-		
 		var data = [
             {
               type: "indicator",
@@ -125,47 +116,57 @@ function gaugeChart(animal) {
 		  };
 		  
 		  Plotly.newPlot('gauge', data, layout);
-        });
+        });// .catch( error =>  console.log(error));
 }
 gaugeChart(978)
 
-// // 2. BUBBLE CHART 
-// function buildBubbleChart(animal) {
+// 2. TIME SERIES CHART 
+function buildTimeSeries(animal) {
 
-// 	// Use D3 to read in the JSON data 
-// 	d3.json("/api/v1.0/aggregation").then((data) => {
+	// Use D3 to read in the JSON data 
+	d3.json("/api/v1.0/aggregation").then((data) => {
 
-// 		// Access the records array 
-// 		var records = data.records;
-// 		console.log(records);
+		// Access the records array 
+		var records = data.records;
+		// console.log(records);
 
-// 		// Filter to specific animal 
-// 		var result = records.filter(row => row._id === animal)[0];
+		// Filter to specific animal 
+		var result = records.filter(row => row._id === animal)[0]
+		
+		if (result === undefined) {
+			return;
+		}
 
-// 		// Obtain date 
-// 		var date = result.start_date;
+		var startDate = result.start_date;
 
-// 		// obtain number of sightings 
-// 		var numSightings = result.number_sightings;
+		var newDates = [];
+
+		startDate.map(function(date) {
+			newDates.push(date.slice(8, 16));
+		});
+		// console.log(newDates);
+
+		// obtain number of sightings 
+		var numSightings = result.number_sightings;
 
 
-// 		var data = [
-// 			{
-// 			  x: date,
-// 			  y: numSightings,
-// 			  type: 'scatter'
-// 			}
-// 		  ];
+		var data = [
+			{
+			  x: newDates,
+			  y: numSightings,
+			  type: 'scatter'
+			}
+		  ];
 		  
-// 		  Plotly.newPlot('bubble', data);		
+		  Plotly.newPlot('bubble', data);		
 
-// 	});
-// }
-// buildBubbleChart(978);
+	});// .catch( error =>  console.log(error));
+}
+buildTimeSeries(978);
 
 
 
-// Create an init function 
+// Create an init function to initialize the page 
 function init() {
 
 	// Use D3 to select the dropdown menu 
@@ -181,12 +182,6 @@ function init() {
 		var speciesName = metaData.map(row => row._id);
 		//console.log(speciesName);
 
-		// // Create array to store distinct species names 
-		// var uniqueAnimals = d3.map(metaData, function(d) {
-		// 	return d._id;
-		// }).keys()
-		// console.log(uniqueAnimals);
-
 		speciesName.forEach(function(name) {
 			dropDown.append("option").text(name).property("value")
 		});
@@ -197,7 +192,7 @@ function init() {
 		gaugeChart(animalChosen);
 		getFunFacts(animalChosen);
 		getImageInfo(animalChosen);
-		// buildBubbleChart(animalChosen);
+		buildTimeSeries(animalChosen);
 
 	});
 }
@@ -206,7 +201,7 @@ function optionChanged(newAnimal) {
 	gaugeChart(newAnimal);
 	getFunFacts(newAnimal);
 	getImageInfo(newAnimal);
-	// buildBubbleChart(newAnimal);
+	buildTimeSeries(newAnimal);
 }
 
 init();

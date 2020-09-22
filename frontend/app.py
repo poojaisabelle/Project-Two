@@ -69,10 +69,10 @@ def aggregation():
 					{
 						"$group" : {
 							"_id" :"$comm_name",
-							"science_name": { "$first": "$sci_name" },
+							"scientific_name": { "$first": "$sci_name" },
 							"taxon_id": { "$first": "$taxon_id" },
 							"taxon_type": { "$first": "$taxon_type" },
-							"totalSightings": { "$sum": "$totalcount" },
+							"total_sightings": { "$sum": "$totalcount" },
 						}
 					}
 				])
