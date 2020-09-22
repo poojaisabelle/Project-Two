@@ -47,14 +47,13 @@
             <div class="well">
               <h5>Type of animal:</h5>
               <!-- onchange="optionChanged(this.value)" -->
-              <select id="selDataset1"></select>
-
+              <select id="selDataset1" onchange="optionChanged1(this.value)"></select>
                       <h5>Family of Animal:</h5>
                       <!-- onchange="optionChanged(this.value)" -->
-                      <select id="selDataset2"></select>
+                      <select id="selDataset2" onchange="optionChanged2(this.value)"></select>
                               <h5>Month of Sightings:</h5>
                               <!-- onchange="optionChanged(this.value)" -->
-                              <select id="selDataset3"></select>
+                              <select id="selDataset3" onchange="optionChanged3(this.value)"></select>
                             </div>
                   <button id="filter-btn" type="reset" class="btn btn-default">Clear Filters</button>
                 </form>
