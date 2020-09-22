@@ -63,14 +63,14 @@ d3.json("/api/v1.0/vbafauna").then((importedData) => {
 			return d[0].toUpperCase() + d.slice(1, d.length); // capitalize 1st letter
 		});
 
-	var initialData2 = uniqueMonths[[0]];
+	var initialData3 = uniqueMonths[[0]];
 });
 
 // Insert data table
 // from data.js
 //var tableData = data;
 
-// Attach HTML table and add rows for UFO data
+// Attach HTML table and add rows for data
 d3.json("/api/v1.0/vbafauna").then((importedData) => {
 	console.log(importedData);
 
@@ -98,32 +98,19 @@ d3.json("/api/v1.0/vbafauna").then((importedData) => {
 	//button.on("click", runEnter);
 	//form.on("submit", runEnter);
 
-	// Complete the event handler function for the form
-	function optionChanged() {
+	// Complete the event handler function for the aniaml drop down
+	function optionChanged1(inputAnimal) {
 
 		// Prevent the page from refreshing
 		// d3.event.preventDefault();
 
 		// Select the input element, property, and get the raw HTML node
-		var inputAnimal = d3.select("#selDataset1").property("value");
-		var inputType = d3.select("#selDataset2").property("value").toLowerCase();
-		var inputMonth = d3.select("#selDataset3").property("value").toLowerCase();
+		//var inputAnimal = d3.select("#selDataset1").property("value");
 
-		// console.log(inputDate,inputCity,inputState,inputCountry,inputShape);
-
-		// Use the form input to filter the data by 5 fields
+		// Use the drop down to filter the data 
 		filteredData = data;
 
-		if (inputAnimal) {
-			filteredData = filteredData.filter(data => data.comm_name == inputAnimal);
-		}
-
-		if (inputType) {
-			filteredData = filteredData.filter(data => data.taxon_type == inputType);
-		}
-
-		if (inputMonth) {
-			filteredData = filteredData.filter(data => data.start_mth == inputMonth);
+		filteredData = filteredData.filter(data => data.comm_name == initialData1);
 		}
 
 		// Show filtered results only in main table
@@ -141,45 +128,107 @@ d3.json("/api/v1.0/vbafauna").then((importedData) => {
 				cell.text(value);
 			});
 		});
-	};
-});
+	});
+	
+// Complete the event handler function for the taxon drop down
+function optionChanged2(taxon) {
+
+	// Prevent the page from refreshing
+	// d3.event.preventDefault();
+
+	// Select the input element, property, and get the raw HTML node
+	var inputType = d3.select("#selDataset2").property("value").toLowerCase();
+
+	// Use the drop down to filter the data 
+	filteredData = data;
+
+	filteredData = filteredData.filter(data => data.taxon_type == initialData2);
+
+	// Show filtered results only in main table
+	//   if (filteredData.length == 0) {
+	//       // console.log(`No results for the parameters you have provided - ${inputDate}, ${inputCity}, ${inputState}, ${inputCountry}, ${inputShape}.`);
+	//       tbody.html("");
+	//       tbody.text(`There are no results for the parameters you have provided - ${inputDate}, ${inputCity}, ${inputState}, ${inputCountry}, ${inputShape}.`);
+	//     } else {
+	tbody.html("");
+	filteredData.forEach((report) => {
+		var row = tbody.append('tr');
+		Object.entries(report).forEach(([key, value]) => {
+			// console.log(key, value);
+			var cell = row.append('td');
+			cell.text(value);
+		});
+	});
+};
+
+// Complete the event handler function for the aniaml drop down
+function optionChanged3(month) {
+
+	// Prevent the page from refreshing
+	// d3.event.preventDefault();
+
+	// Select the input element, property, and get the raw HTML node
+	var inputMonth = d3.select("#selDataset3").property("value").toLowerCase();
+
+	// Use the drop down to filter the data 
+	filteredData = data;
+	filteredData = filteredData.filter(data => data.start_mth == initialData3);
+
+	// Show filtered results only in main table
+	//   if (filteredData.length == 0) {
+	//       // console.log(`No results for the parameters you have provided - ${inputDate}, ${inputCity}, ${inputState}, ${inputCountry}, ${inputShape}.`);
+	//       tbody.html("");
+	//       tbody.text(`There are no results for the parameters you have provided - ${inputDate}, ${inputCity}, ${inputState}, ${inputCountry}, ${inputShape}.`);
+	//     } else {
+	tbody.html("");
+	filteredData.forEach((report) => {
+		var row = tbody.append('tr');
+		Object.entries(report).forEach(([key, value]) => {
+			// console.log(key, value);
+			var cell = row.append('td');
+			cell.text(value);
+		});
+	});
+};
 
 // Create an init function 
-function init1() {
+// function init() {
 
-	// Use D3 to select the dropdown menu 
-	var dropdown1 = d3.select("#selDataset1");
+// 	if (inputAnimal) {
+		
+// 	// Use D3 to select the dropdown menu 
+// 	var dropdown1 = d3.select("#selDataset1");
 
-	// Use D3 to read in the JSON data 
-	d3.json("/api/v1.0/vbafauna").then((data) => {
+// 	// Use D3 to read in the JSON data 
+// 	d3.json("/api/v1.0/vbafauna").then((data) => {
 
-		// Access the common name array
-		var animalData = data.comm_name;
+// 		// Access the common name array
+// 		var animalData = data.comm_name;
 
-		// Create array to store distinct species name 
-		var speciesName = animalData.map(row => row.comm_name);
-		//console.log(speciesName);
+// 		// Create array to store distinct species name 
+// 		var speciesName = animalData.map(row => row.comm_name);
+// 		//console.log(speciesName);
 
-		// // Create array to store distinct species names 
-		// var uniqueAnimals = d3.map(metaData, function(d) {
-		// 	return d._id;
-		// }).keys()
-		// console.log(uniqueAnimals);
+// 		// // Create array to store distinct species names 
+// 		// var uniqueAnimals = d3.map(metaData, function(d) {
+// 		// 	return d._id;
+// 		// }).keys()
+// 		// console.log(uniqueAnimals);
 
-		speciesName.forEach(function(name) {
-			dropDown.append("option").text(name).property("value")
-		});
+// 		speciesName.forEach(function (name) {
+// 			dropDown.append("option").text(name).property("value")
+// 		});
 
-		var animalChosen = dropDown.node().value;
-		//console.log(animalChosen);
+// 		var animalChosen = dropDown.node().value;
+// 		//console.log(animalChosen);
 
-		optionChanged(animalChosen);
+// 		optionChanged(animalChosen);
 
-	});
-}
+// 	});
+// }
 
-function optionChanged(newAnimal) {
-	optionChanged(newAnimal);
-}
+// function optionChanged(newAnimal) {
+// 	optionChanged(newAnimal);
+// }
 
-init1();
+// init1();
