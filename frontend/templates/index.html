@@ -7,7 +7,7 @@
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
     integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-    crossorigin="" />
+    crossorigin="">
 
   <!-- Marker Cluster CSS -->
   <link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet.markercluster@1.0.3/dist/MarkerCluster.css">
@@ -25,22 +25,42 @@
 </head>
 
 <body>
-  <div id="navigation">
-    <ul>
-      <li>
-        <a href="/">Home</a>
-      </li>
-      <li>
-        <a href="/dashboard">Dashboard</a>
-      </li>
-      <li>
-        <a href="/data">Data</a>
-      </li>
-    </ul>
-  </div>
 
-  <!-- The div where we will inject our map -->
-  <div id="map">Map</div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link active" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/data">Data</a>
+          </li>
+        </ul>
+
+        <div class="jumbotron text-center">
+          <h1>Victoria Threatened Species Map</h1>
+          <p>Use the interactive map below to explore the dataset</p>
+        </div>
+      </div>
+    </div>
+        
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-10">
+
+        <div class="introduction">
+          This is the map about blah blah
+        </div>
+        <!-- The div where we will inject our map -->
+        <div id="map"></div>
+      </div>
+      <div class="col-md-1"></div>
+    </div>
+  </div>
 
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
