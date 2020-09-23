@@ -1,4 +1,4 @@
-// Create a function to retreieve "fun facts" for each species 
+// Create a function to retrieve "fun facts" for each species 
 function getFunFacts(animal) {
 	d3.json("/api/v1.0/aggregation").then((data) => {
 
@@ -8,13 +8,13 @@ function getFunFacts(animal) {
 		// console.log(metaData);
 
 		// Filter the metadata by common name 
-		result = metaData.filter(function(d) {
+		var result = metaData.filter(function(d) {
 			return d._id === animal;
 		});
 		// console.log(result);
 
 		// Get the first object 
-		object = result[0];
+		var object = result[0];
 		// console.log(object);
 
 		// Clear the panel before a new animal is chosen 
@@ -29,22 +29,22 @@ function getFunFacts(animal) {
 			funFactsPanel
 				.append("p")
 				.text(`${key[0].replace(/_/g, " ").toUpperCase()}: ${key[1]}`);
-			});
+		});
 	}); //.catch( error =>  console.log(error));
 }
-getFunFacts(978);
+
 
 // IMAGE AND INFO SCRAPED 
 function getImageInfo(animal) {
 	d3.json("/api/v1.0/scrapedfauna").then((scrapedData) => {
 
-		console.log(scrapedData);
+		// console.log(scrapedData);
 
 		// Rename array 
-		animalInfo = scrapedData;
+		var animalInfo = scrapedData;
 
 		// Filter to animal name 
-		result = animalInfo.filter(row => row.animal_name === animal)[0];
+		var result = animalInfo.filter(row => row.animal_name === animal)[0];
 
 		if (result === undefined) {
 			return;
@@ -55,14 +55,13 @@ function getImageInfo(animal) {
 			.html("")
 			.append("img")
 			.attr("src", result.image_url)
-			.classed("img-responsive", true);
+			.attr("alt", result.image_alternative)
+			.classed("img-fluid", true)
+			.classed("img-thumbnail", true);
 			//.append("img src", result.image_url);
 			//.html(`<img src="${result.image_url}">`);
-					
 	});
 }
-getImageInfo(978);
-
 
 
 // 1. GAUGE CHART 
@@ -86,7 +85,7 @@ function gaugeChart(animal) {
 		//console.log(result);
 		
 		// Obtain the totalsightings number 
-		totalSightings = result[0].total_sightings;
+		var totalSightings = result[0].total_sightings;
 		//console.log(totalSightings);
 	
 		// MAKE GUAGE CHART 
@@ -103,28 +102,28 @@ function gaugeChart(animal) {
                 borderwidth: 1,
                 bordercolor: "gray",
                 steps: [
-					{ range: [0, 500], color: "#F31919" },
-					{ range: [500, 1000], color: "#F35519" },
-					{ range: [1000, 1500], color: "#F39219" },
-					{ range: [1500, 2000], color: "#F3BA19" },
-					{ range: [2000, 2500], color: "#F3D519" },
-					{ range: [2500, 3000], color: "#E9F319" }
+												{ range: [0, 500], color: "#F31919" },
+												{ range: [500, 1000], color: "#F35519" },
+												{ range: [1000, 1500], color: "#F39219" },
+												{ range: [1500, 2000], color: "#F3BA19" },
+												{ range: [2000, 2500], color: "#F3D519" },
+												{ range: [2500, 3000], color: "#E9F319" }
                 ],
               }
             }
-          ];
+      ];
 		  
-		  var layout = {
+		var layout = {
 			width: 500,
-			height: 400,
+			height: 500,
 			margin: { t: 25, r: 35, l: 25, b: 25 },
 			font: { color: "black", family: "Arial" },
-		  };
-		  
-		  Plotly.newPlot('gauge', data, layout);
-        });// .catch( error =>  console.log(error));
+		};
+		
+		Plotly.newPlot('gauge', data, layout);
+	});// .catch( error =>  console.log(error));
 }
-gaugeChart(978)
+
 
 // 2. TIME SERIES CHART 
 function buildTimeSeries(animal) {
@@ -143,33 +142,31 @@ function buildTimeSeries(animal) {
 			return;
 		}
 
-		var startDate = result.start_date;
+		var startDate = result.start_date.reverse();
 
 		var newDates = [];
 
 		startDate.map(function(date) {
-			newDates.push(date.slice(8, 16));
+			newDates.push(date.slice(5, 16));
 		});
 		// console.log(newDates);
 
 		// obtain number of sightings 
-		var numSightings = result.number_sightings;
+		var numSightings = result.number_sightings.reverse();
 
-
-		var data = [
-			{
+		var data = {
 			  x: newDates,
 			  y: numSightings,
-			  type: 'scatter'
-			}
-		  ];
+				mode: 'markers',
+				marker: {
+					color: numSightings,
+					size: numSightings
+			}};
 		  
-		  Plotly.newPlot('bubble', data);		
+		Plotly.newPlot('bubble', [data]);		
 
 	});// .catch( error =>  console.log(error));
 }
-buildTimeSeries(978);
-
 
 
 // Create an init function to initialize the page 
@@ -203,11 +200,11 @@ function init() {
 	});
 }
 
+init();
+
 function optionChanged(newAnimal) {
 	gaugeChart(newAnimal);
 	getFunFacts(newAnimal);
 	getImageInfo(newAnimal);
 	buildTimeSeries(newAnimal);
 }
-
-init();
