@@ -142,7 +142,7 @@ function buildTimeSeries(animal) {
 			return;
 		}
 
-		var startDate = result.start_date.reverse();
+		var startDate = result.start_date;
 
 		var newDates = [];
 
@@ -152,7 +152,7 @@ function buildTimeSeries(animal) {
 		// console.log(newDates);
 
 		// obtain number of sightings 
-		var numSightings = result.number_sightings.reverse();
+		var numSightings = result.number_sightings;
 
 		var data = {
 			  x: newDates,
