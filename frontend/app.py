@@ -90,18 +90,31 @@ def aggregation():
 							"number_sightings": { "$push": "$totalcount" },
 							"long": { "$push": "$long" },
 							"lat": { "$push": "$lat" },
-							"start_year": { "$push": "$start_year" },
-							"start_mth": { "$push": "$start_mth" },
 							"start_date": { "$push": "$start_date" }
 						}
 					}
 				])
 			)
 
+		# Aggregrate total sightings by animal by month
+		sightings_by_month = list(
+			vba_fauna.aggregate([
+				{
+						"$group": {
+								"_id": {
+										"animal_name": "$comm_name",
+										"year_month": "$year_month"
+								},
+								"total_sightings": { "$sum": "$totalcount" }
+						}
+				}
+			]))
+
 		# Add an aggregation dictionary
 		aggregation_dict = {
 			"metadata": metadata,
-			"records": records_by_animal
+			"records": records_by_animal,
+			"sightings_by_month": sightings_by_month
 		}
 
 		return jsonify(aggregation_dict)
