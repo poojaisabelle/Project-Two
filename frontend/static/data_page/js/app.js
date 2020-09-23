@@ -1,208 +1,103 @@
-// Attach HTML table and add rows for data
-function defaultOption(inputDefault) {
-	d3.json("/api/v1.0/vbafauna").then((importedData) => {
-		// console.log(importedData);
+// from data.js
 
-		var data = importedData;
-		var tbody = d3.select("tbody");
-		// console.log("Yeah that worked")
+d3.json("/api/v1.0/vbafauna").then((importedData) => {
+	var tableData = importedData;
 
-		data.forEach((data) => {
-			var row = tbody.append("tr");
-			Object.entries(data).forEach(([key, value]) => {
-				var cell = row.append("td");
-				cell.text(value);
-			});
-		});
-	});
-};
+	// Get a reference to the table body
+	var tbody = d3.select("tbody");
 
-// Complete the event handler function for the aniaml drop down
-function animalOption(inputAnimal) {
+	// Add the whole table of animal sightings data when loading the page
+	tableData.forEach((record) => {
+		var row = tbody.append("tr");
+		Object.entries(record).forEach(([key, value]) => {
+			var cell = row.append("td");
+			cell.text(value);
+		})
+	})
 
-	d3.json("/api/v1.0/vbafauna").then((importedData) => {
-		//console.log(importedData);
+	// Create arrays to store distinct animals and taxon types in abc order
+	var uniqueAnimal = [... new Set(tableData.map(record => record.comm_name))].sort();
+	console.log(uniqueAnimal);
 
-		var data = importedData;
+	var uniqueType = [... new Set(tableData.map(record => record.taxon_type))].sort();
+	console.log(uniqueType);
 
-		// Use the drop down to filter the data 
-		result = data.filter(function (d) {
-			return d.comm_name;
-		});
-		// console.log(result);
-		result = data.filter(data => data.comm_name == inputAnimal);
-		// console.log(result)
-		if (result === undefined) { return; }
+	// Dynamically add unique animal and taxon types to corresponding dropdown menus
+	uniqueAnimal.forEach((animal) => {
+		d3.select("#comm_name").append("option").text(animal);
+	})
 
-		var tbody = d3.select("tbody");
+	uniqueType.forEach((type) => {
+		d3.select("#taxon_type").append("option").text(type);
+	})
+
+	// Select and Create event handlers for the form's inputs and dropdown selections
+	d3.selectAll(".form-control").on("change", updateFilters);
+
+	// Select and Create event handlers for the button Clear Filter
+	d3.select("#filter-btn").on("click", clear);
+
+	// Create filter object to keep track of all filters
+	var multifilters = {};
+
+	// Create a function to dynamically add a filter value each time user add any filter
+	function updateFilters() {
+
+	 // Save the element, value, and id of the filter that was changed
+		// In an event, "this" refers to the html element that received the event.
+	 var inputElement = d3.select(this);
+	 var filterId = inputElement.attr("id");
+	 var inputValue = inputElement.property("value");
+
+	 // If a filter value was entered then add that filterId and value
+	 // to the filters array. Otherwise, clear that filter from the filters object.
+	 if (inputValue) {
+		  multifilters[filterId] = inputValue;
+	 }
+	 else {
+	   delete multifilters[filterId];
+	 }
+
+	 // Call function to apply all filters and rebuild the table
+	 filterTable();
+	}
+
+	function filterTable() {
+
+		// Prevent the page from refreshing
+		d3.event.preventDefault();
+
+		// Use the form's inputs and dropdown selections to filter the data by multiple attributes
+		var results = tableData.filter(function(record) {
+			for (var key in multifilters) {
+				if (multifilters[key] === undefined || record[key] != multifilters[key])
+					return false;
+			}
+			return true;
+		})
+		
+		// Clear out current contents in the table
 		tbody.html("");
-		result.forEach((report) => {
-			var row = tbody.append('tr');
-			Object.entries(report).forEach(([key, value]) => {
-				// console.log(key, value);
-				var cell = row.append('td');
-				cell.text(value);
-			});
-		});
-	});
-}
 
-// Complete the event handler function for the taxon drop down
-function taxonOption(inputTaxon) {
+		// Handle no matching results
+		if (results.length === 0) {
+			tbody.text(`No animal sightings found.`);
+		}
+		else {
+			results.forEach((record) => {
+				var row = tbody.append("tr");
+				Object.entries(record).forEach(([key, value]) => {
+					var cell = row.append("td");
+					cell.text(value);
+				})
+			})
+		}
+	}
 
-	d3.json("/api/v1.0/vbafauna").then((importedData) => {
-		// console.log(importedData);
+	function clear() {
+		multifilters = {};
+		document.getElementById("filter-form").reset();
+		filterTable();
+	}
+});
 
-		var data = importedData;
-
-		// Use the drop down to filter the data 
-		result = data.filter(function (d) {
-			return d.taxon_type;
-		});
-		//console.log(result);
-		result = data.filter(data => data.taxon_type == inputTaxon);
-		//console.log(result)
-		if (result === undefined) { return; }
-
-		var tbody = d3.select("tbody");
-		tbody.html("");
-		result.forEach((report) => {
-			var row = tbody.append('tr');
-			Object.entries(report).forEach(([key, value]) => {
-				// console.log(key, value);
-				var cell = row.append('td');
-				cell.text(value);
-			});
-		});
-	});
-}
-
-// Complete the event handler function for the aniaml drop down
-function monthOption(inputMonth) {
-
-	d3.json("/api/v1.0/vbafauna").then((importedData) => {
-		// console.log(importedData);
-
-		var data = importedData;
-
-		// Use the drop down to filter the data 
-		result = data.filter(function (d) {
-			return d.start_mth;
-		});
-		// console.log(result);
-		result = data.filter(data => data.start_mth == inputMonth);
-		// console.log(result)
-		if (result === undefined) { return; }
-
-		var tbody = d3.select("tbody");
-		tbody.html("");
-		result.forEach((report) => {
-			var row = tbody.append('tr');
-			Object.entries(report).forEach(([key, value]) => {
-				// console.log(key, value);
-				var cell = row.append('td');
-				cell.text(value);
-			});
-		});
-	});
-}
-
-// Create an init function to initialize the page 
-function init() {
-
-	// Use D3 to select the dropdown menu 
-	var dropdown1 = d3.select("#selDataset1");
-	var dropdown2 = d3.select("#selDataset2");
-	var dropdown3 = d3.select("#selDataset3");
-
-	// Use D3 to read in the JSON data 
-	d3.json("/api/v1.0/vbafauna").then((data) => {
-
-		var data = data;
-		// console.log(typeof (data));
-		// console.log(data);
-
-		// Create default table
-		var tbody = d3.select("tbody");
-		// console.log("Yeah that worked")
-
-		data.forEach((data) => {
-			var row = tbody.append("tr");
-			Object.entries(data).forEach(([key, value]) => {
-				var cell = row.append("td");
-				cell.text(value);
-			});
-		});
-
-		// Create list of unique animals
-		var uniqueAnimals = d3.map(data, function (d) { return d.comm_name; }).keys()
-		// console.log(uniqueAnimals);
-		// console.log(typeof (uniqueAnimals));
-		// console.log(d3.selectAll(uniqueAnimals).size());
-
-		// Get names of animals for dropdown
-		var dropdown1 = d3.select("#selDataset1")
-			.selectAll("option")
-			.data(uniqueAnimals)
-			.enter().append("option")
-			.attr("value", function (d) { return d.comm_name; })
-			.text(function (d) {
-				return d[0].toUpperCase() + d.slice(1, d.length); // capitalize 1st letter
-			});
-
-		// Create list of unique taxon type
-		var uniqueTaxons = d3.map(data, function (d) { return d.taxon_type; }).keys()
-
-		// Get names of taxon types for drop down
-		var dropdown2 = d3.select("#selDataset2")
-			.selectAll("option")
-			.data(uniqueTaxons)
-			.enter().append("option")
-			.attr("value", function (d) { return d.taxon_type; })
-			.text(function (d) {
-				return d[0].toUpperCase() + d.slice(1, d.length); // capitalize 1st letter
-			});
-
-		// Create list of unique months
-		var uniqueMonths = d3.map(data, function (d) { return d.start_mth; }).keys()
-
-		// Get names of months for drop down
-		var dropdown3 = d3.select("#selDataset3")
-			.selectAll("option")
-			.data(uniqueMonths)
-			.enter().append("option")
-			.attr("value", function (d) { return d.start_mth; })
-			.text(function (d) {
-				return d[0].toUpperCase() + d.slice(1, d.length); // capitalize 1st letter
-			});
-	});
-
-	// Bind drop down values
-	var animalChosen = dropdown1.node().value;
-	var taxonChosen = dropdown2.node().value;
-	var monthChosen = dropdown3.node().value;
-	// console.log(animalChosen);
-
-	animalOption(animalChosen);
-	taxonOption(taxonChosen);
-	monthOption(monthChosen);
-}
-
-// Create function for optionChange
-function optionChanged1(newAnimal) {
-	animalOption(newAnimal);
-}
-
-function optionChanged2(newTaxon) {
-	taxonOption(newTaxon);
-}
-
-function optionChanged3(newMonth) {
-	monthOption(newMonth);
-}
-
-// Create function for reset filters
-function resetFilters(newData) {
-	defaultOption(newDefault);
-}
-init();
