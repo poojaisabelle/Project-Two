@@ -52,7 +52,13 @@ function getImageInfo(animal) {
 		// console.log(result.image_url);
 
 		d3.select(".img-gallery")
-			.html(`<img src="${result.image_url}">`);	
+			.html("")
+			.append("img")
+			.attr("src", result.image_url)
+			.classed("img-responsive", true);
+			//.append("img src", result.image_url);
+			//.html(`<img src="${result.image_url}">`);
+					
 	});
 }
 getImageInfo(978);
