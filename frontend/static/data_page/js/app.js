@@ -1,6 +1,6 @@
 // from data.js
 
-d3.json("/api/v1.0/vbafauna").then((importedData) => {
+d3.json("/api/v1.0/table").then((importedData) => {
 	var tableData = importedData;
 
 	// Get a reference to the table body
