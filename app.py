@@ -1,20 +1,14 @@
 # Import necessary libraries
 from flask import Flask, jsonify, render_template
 import pymongo
-# import os
+import os
 
 # Create instance of Flask app
 app = Flask(__name__)
 
-# from flask_sqlalchemy import SQLAlchemy
-# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', '') or "sqlite:///db.sqlite"
-
-# # Remove tracking modifications
-# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
 
 # setup mongo connection
-conn = "mongodb://localhost:27017"
+conn = os.environ.get('DATABASE_URL', '') or 'mongodb://localhost:27017'
 client = pymongo.MongoClient(conn)
 
 # connect to mongo db and collections
