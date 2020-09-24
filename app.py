@@ -1,9 +1,17 @@
 # Import necessary libraries
 from flask import Flask, jsonify, render_template
 import pymongo
+# import os
 
 # Create instance of Flask app
 app = Flask(__name__)
+
+# from flask_sqlalchemy import SQLAlchemy
+# app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', '') or "sqlite:///db.sqlite"
+
+# # Remove tracking modifications
+# app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 # setup mongo connection
 conn = "mongodb://localhost:27017"
@@ -57,6 +65,14 @@ def scrapedfauna():
     
     # Return the json representation of the species
     return jsonify(species)
+
+
+# Add api route to remove unnecessary fields for displaying table
+@app.route("/api/v1.0/table")
+def table():
+
+		data_table = list(vba_fauna.aggregate([{ "$unset": ["_id"] }]))
+		return jsonify(data_table)
 
 
 # Add api route to get the vba fauna data aggregated by animal names

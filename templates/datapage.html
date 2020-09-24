@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Animal Data</title>
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- Our CSS -->
+  <link rel="stylesheet" type="text/css" href="static/data_page/css/style.css">
+
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <ul class="nav nav-tabs">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="/data">Data</a>
+          </li>
+        </ul>
+
+        <div class="jumbotron text-center">
+          <h1>Victoria Threatened Species Data</h1>
+          <p>Use the interactive table below to explore the dataset</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="row margin-top-50">
+      <div class="col-md-2">
+        <aside class="filters">
+          <div class="panel panel-default">
+            <div class="panel-heading">Filter Search</div>
+            <div class="panel-body">
+              <form id="filter-form">
+                <div class="form-group">
+                  <ul class="list-group" id="filters">
+                    <li class="filter list-group-item">
+                      <label for="comm_name">Choose an Animal</label>
+                      <select class="form-control" id="comm_name">
+                        <option style="display:none"></option>
+                      </select>
+                    </li>
+                    <li class="filter list-group-item">
+                      <label for="taxon_type">Choose a Taxon Type</label>
+                      <select class="form-control" id="taxon_type">
+                        <option style="display:none"></option>
+                      </select>
+                    </li>
+                    <li class="filter list-group-item">
+                      <label for="year_month">Enter a Year-Month</label>
+                      <input class="form-control" id="year_month" type="text" placeholder="2015-01">
+                    </li>
+                  </ul>
+                </div>
+                <button id="filter-btn" type="reset" class="btn btn-default">Clear Filters</button>
+              </form>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <div class="col-md-10">
+        <div id="table-area" class="">
+          <table id="animal-table" class="table table-striped">
+            <thead>
+              <tr>
+                <th class="table-head">Common Name</th>
+                <th class="table-head">Latitude</th>
+                <th class="table-head">Longitude</th>
+                <th class="table-head">Record ID</th>
+                <th class="table-head">Scientific Name</th>
+                <th class="table-head">Date of Sighting</th>
+                <th class="table-head">Survey ID</th>
+                <th class="table-head">Taxon ID</th>
+                <th class="table-head">Taxon Type</th>
+                <th class="table-head">Total Count</th>
+                <th class="table-head">Year Month</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <script src="https://d3js.org/d3.v5.min.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.5.0/d3.js"></script>
+  <script src="static/data_page/js/app.js"></script>
+</body>
+
+</html>
