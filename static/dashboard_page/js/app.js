@@ -117,8 +117,10 @@ function gaugeChart(animal) {
 			margin: { t: 25, r: 35, l: 25, b: 25 },
 			font: { color: "black", family: "Arial" },
 		};
+
+		var config = {responsive: true}
 		
-		Plotly.newPlot('gauge', data, layout);
+		Plotly.newPlot('gauge', data, layout, config);
 	});
 }
 
@@ -161,39 +163,26 @@ function buildBarChart(animal) {
 			{
 			  x: yearMonth,
 			  y: totalSightings,
-			  type: "scatter"
+			  type: 'bar'
 			}
 		  ];
 
 		var layout = {
-			title: "Total Sightings Per Month"
-
+			title: 'Total Sightings Per Month',
+			yaxis: {
+				title: "Number of Sightings"
+			},
+			xaxis: {
+				title: "Months",
+				tickmode: 'array',
+				nticks: 70,
+				tickangle: -45
+			}
 		}
+
+		var config = {responsive: true}
 		  
-		  Plotly.newPlot('bar', data, layout);
-
-
-		// var data = [
-		// 	{
-		// 	  x: yearMonth,
-		// 	  y: totalSightings,
-		// 	  type: 'bar'
-		// 	}
-		//   ];
-
-		// var layout = {
-		// 	title: 'Total Sightings Per Month',
-		// 	yaxis: {
-		// 		title: "Number of Sightings"
-		// 	},
-		// 	xaxis: {
-		// 		title: "Months",
-		// 		tickmode: 'array',
-		// 		nticks: 30,
-		// 	}
-		// };
-		  
-		//   Plotly.newPlot('bar', data, layout);
+		Plotly.newPlot('bar', data, layout, config);
 
 	});
 }
