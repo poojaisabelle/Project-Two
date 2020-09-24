@@ -4,8 +4,16 @@ body {
 
 
 .panel {
-  height: 230px;
+  height: auto;
 }
+
+/* .well {
+  height: auto;
+} */
+
+/* #selDataset {
+  width: auto;
+} */
 
 .img-gallery img {
   height: 345px;
@@ -14,3 +22,7 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
+
+
+
+
