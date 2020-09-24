@@ -30,7 +30,7 @@ function getFunFacts(animal) {
 				.append("p")
 				.text(`${key[0].replace(/_/g, " ").toUpperCase()}: ${key[1]}`);
 		});
-	}); //.catch( error =>  console.log(error));
+	});
 }
 
 
@@ -58,8 +58,6 @@ function getImageInfo(animal) {
 			.attr("alt", result.image_alternative)
 			.classed("img-fluid", true)
 			.classed("img-thumbnail", true);
-			//.append("img src", result.image_url);
-			//.html(`<img src="${result.image_url}">`);
 	});
 }
 
@@ -121,53 +119,84 @@ function gaugeChart(animal) {
 		};
 		
 		Plotly.newPlot('gauge', data, layout);
-	});// .catch( error =>  console.log(error));
+	});
 }
 
-
-// 2. TIME SERIES CHART 
-function buildTimeSeries(animal) {
-
-	// Use D3 to read in the JSON data 
+// 2. BAR CHART 
+function buildBarChart(animal) {
 	d3.json("/api/v1.0/aggregation").then((data) => {
 
-		// Access the records array 
-		var records = data.records;
-		// console.log(records);
+		// Access the sightings by month 
+		var sightingsPerMonth = data.sightings_by_month;
+		//console.log(sightingsPerMonth); 
 
-		// Filter to specific animal 
-		var result = records.filter(row => row._id === animal)[0]
-		
-		if (result === undefined) {
-			return;
-		}
+		var object = sightingsPerMonth;
+		// console.log(object); 
 
-		var startDate = result.start_date;
+		// Filter the results according to the animal chosen 
+		result = object.filter(object => object._id.animal_name === animal);
+		// console.log(result);
 
-		var newDates = [];
+		// Create empty arrays 
+		var yearMonth = [];
+		var totalSightings = [];
 
-		startDate.map(function(date) {
-			newDates.push(date.slice(5, 16));
+
+		// Loop over every result array and push info to arrays 
+		result.forEach(function(d) {
+			yearMonth.push(d._id.year_month);
+			totalSightings.push(d.total_sightings);
 		});
-		// console.log(newDates);
+		// console.log(yearMonth);
+		// console.log(totalSightings);
 
-		// obtain number of sightings 
-		var numSightings = result.number_sightings;
+		yearMonth.sort(function(a,b) {
+			a = a.split('/').reverse().join('');
+			b = b.split('/').reverse().join('');
+			return a > b ? 1 : a < b ? -1 : 0;
+		  });
+		console.log(yearMonth);
 
-		var data = {
-			  x: newDates,
-			  y: numSightings,
-				mode: 'markers',
-				marker: {
-					color: numSightings,
-					size: numSightings
-			}};
+		var data = [
+			{
+			  x: yearMonth,
+			  y: totalSightings,
+			  type: "scatter"
+			}
+		  ];
+
+		var layout = {
+			title: "Total Sightings Per Month"
+
+		}
 		  
-		Plotly.newPlot('bubble', [data]);		
+		  Plotly.newPlot('bar', data, layout);
 
-	});// .catch( error =>  console.log(error));
+
+		// var data = [
+		// 	{
+		// 	  x: yearMonth,
+		// 	  y: totalSightings,
+		// 	  type: 'bar'
+		// 	}
+		//   ];
+
+		// var layout = {
+		// 	title: 'Total Sightings Per Month',
+		// 	yaxis: {
+		// 		title: "Number of Sightings"
+		// 	},
+		// 	xaxis: {
+		// 		title: "Months",
+		// 		tickmode: 'array',
+		// 		nticks: 30,
+		// 	}
+		// };
+		  
+		//   Plotly.newPlot('bar', data, layout);
+
+	});
 }
-
 
 // Create an init function to initialize the page 
 function init() {
@@ -195,7 +224,8 @@ function init() {
 		gaugeChart(animalChosen);
 		getFunFacts(animalChosen);
 		getImageInfo(animalChosen);
-		buildTimeSeries(animalChosen);
+		buildBarChart(animalChosen);
+		// buildTimeSeries(animalChosen);
 
 	});
 }
@@ -206,5 +236,6 @@ function optionChanged(newAnimal) {
 	gaugeChart(newAnimal);
 	getFunFacts(newAnimal);
 	getImageInfo(newAnimal);
-	buildTimeSeries(newAnimal);
+	buildBarChart(newAnimal);
+	// buildTimeSeries(newAnimal);
 }
