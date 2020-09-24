@@ -1,6 +1,6 @@
-// Call the table api
+// from data.js
 
-d3.json("/api/v1.0/table").then(function(importedData) {
+d3.json("/api/v1.0/table").then((importedData) => {
 	var tableData = importedData;
 
 	// Get a reference to the table body
@@ -17,8 +17,10 @@ d3.json("/api/v1.0/table").then(function(importedData) {
 
 	// Create arrays to store distinct animals and taxon types in abc order
 	var uniqueAnimal = [... new Set(tableData.map(record => record.comm_name))].sort();
+	console.log(uniqueAnimal);
 
 	var uniqueType = [... new Set(tableData.map(record => record.taxon_type))].sort();
+	console.log(uniqueType);
 
 	// Dynamically add unique animal and taxon types to corresponding dropdown menus
 	uniqueAnimal.forEach((animal) => {
@@ -41,23 +43,23 @@ d3.json("/api/v1.0/table").then(function(importedData) {
 	// Create a function to dynamically add a filter value each time user add any filter
 	function updateFilters() {
 
-		// Save the element, value, and id of the filter that was changed
+	 // Save the element, value, and id of the filter that was changed
 		// In an event, "this" refers to the html element that received the event.
-		var inputElement = d3.select(this);
-		var filterId = inputElement.attr("id");
-		var inputValue = inputElement.property("value");
+	 var inputElement = d3.select(this);
+	 var filterId = inputElement.attr("id");
+	 var inputValue = inputElement.property("value");
 
-		// If a filter value was entered then add that filterId and value
-		// to the filters array. Otherwise, clear that filter from the filters object.
-		if (inputValue) {
+	 // If a filter value was entered then add that filterId and value
+	 // to the filters array. Otherwise, clear that filter from the filters object.
+	 if (inputValue) {
 		  multifilters[filterId] = inputValue;
-		 }
-		else {
-		   delete multifilters[filterId];
-		}
+	 }
+	 else {
+	   delete multifilters[filterId];
+	 }
 
-		// Call function to apply all filters and rebuild the table
-		filterTable();
+	 // Call function to apply all filters and rebuild the table
+	 filterTable();
 	}
 
 	function filterTable() {
@@ -98,3 +100,4 @@ d3.json("/api/v1.0/table").then(function(importedData) {
 		filterTable();
 	}
 });
+

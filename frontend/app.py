@@ -58,12 +58,12 @@ def scrapedfauna():
     # Return the json representation of the species
     return jsonify(species)
 
+
 # Add api route to remove unnecessary fields for displaying table
 @app.route("/api/v1.0/table")
 def table():
 
-		data_table = list(vba_fauna.aggregate([{ "$unset": ["_id", "year_month"] }]))
-
+		data_table = list(vba_fauna.aggregate([{ "$unset": ["_id"] }]))
 		return jsonify(data_table)
 
 
